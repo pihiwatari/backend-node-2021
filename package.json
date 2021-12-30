@@ -1,0 +1,27 @@
+{
+  "name": "20-backend-express",
+  "version": "1.0.0",
+  "description": "A platzi course node and express app",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index.js",
+    "start": "node index.js",
+    "lint": "eslint"
+  },
+  "keywords": [
+    "node",
+    "javascript"
+  ],
+  "author": "Elias Rayas <eliasrayasg@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "^8.5.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "nodemon": "^2.0.15",
+    "prettier": "^2.5.1"
+  },
+  "dependencies": {
+    "express": "^4.17.2"
+  }
+}
