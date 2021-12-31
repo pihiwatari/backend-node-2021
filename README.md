@@ -1,2 +1,2 @@
-# backend-node-2021
-Apuntes del curso de backend con nodejs.
+# READ ME
+Aqui guardo mis apuntes del curso de backend con nodejs. No hay una aplicacion en concreto de este repositorio mas que ser, fuente de información para consulta personal.
