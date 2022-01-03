@@ -1,54 +1,31 @@
 const express = require('express');
-const faker = require('faker');
+const ProductsService = require('../services/products.service');
 
 const router = express.Router();
 
-// Faker genera un array de productos de forma aleatoria.
+// Instanciamos el servicio para usarlo dentro de nuestro router y que
+// este solo se dedique a manejar las rutas.
+
+const service = new ProductsService();
+
+// Enviamos la lógica del negocio (funcionalidad) a la capa de servicios
+// y nuestro router solo se encarga de acceder a los servicios.
 
 router.get('/', (req, res) => {
-  const products = [];
-
-  // Obtenemos los parametros del query
+  // Limitamos
   const { size } = req.query;
-
-  // Si no hay un limite declarado en la consulta, asignamos un
-  // valor por defecto.
-  const limit = size || 10;
-  for (let index = 0; index < limit; index++) {
-    products.push({
-      id: faker.random.alphaNumeric(5),
-      name: faker.commerce.productName(),
-      price: parseInt(faker.commerce.price()),
-      image: faker.image.imageUrl(),
-      category: faker.commerce.department(),
-    });
-  }
-
-  // Respondemos con el array de productos aleatorios.
-  res.json(products);
+  const limit = size;
+  const products = service.find(limit);
+  res.status(200).json(products);
 });
 
-/*
-NOTA IMPORTANTE
-TODOS LOS ENDPOINT ESTATICOS / ESPECIFICOS DEBEN DECLARARSE
-ANTES QUE LOS ENDPOINTS DINAMICOS. CASO CONTRARIO EL ENDPOINT
-DINAMICO LO TOMA COMO PARAMETRO.
-*/
-
-router.get('/filter', (req, res) => {
-  res.send('Soy un filter');
-});
-
-// ':param' (:id) es un parametro dinamico del endpoint que se envia atraves de la url,
-// y podemos acceder a ella usando el objeto 'req' y el atributo params
+// Enviando los parametros del id, podemos indicarle a la clase de servicio
+// que nos devuelva un unico objeto
 
 router.get('/:productId', (req, res) => {
   const { productId } = req.params;
-  res.json({
-    productId,
-    name: `product ${productId}`,
-    cost: 2000,
-  });
+  const product = service.findOne(productId);
+  res.status(200).json(product);
 });
 
 // POST REQUEST
@@ -58,9 +35,30 @@ router.post('/', (req, res) => {
   const body = req.body;
 
   // Respondemos con un JSON que incluya el body y un mensaje.
-  res.json({
+  // Agregamos el atributo status con el codigo que queremos responder
+  res.status(201).json({
     message: 'Created',
     data: body,
+  });
+});
+
+router.patch('/:productId', (req, res) => {
+  const { productId } = req.params;
+  const body = req.body;
+
+  res.status(200).json({
+    productId,
+    message: 'Updated',
+    data: body,
+  });
+});
+
+router.delete('/:productId', (req, res) => {
+  const { productId } = req.params;
+
+  res.status(200).json({
+    productId,
+    message: 'Deleted',
   });
 });
 

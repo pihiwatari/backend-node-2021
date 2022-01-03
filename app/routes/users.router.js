@@ -7,7 +7,7 @@ router.get('/', (req, res) => {
   const users = [];
   for (let index = 0; index < 50; index++) {
     users.push({
-      id: faker.random.alphaNumeric(10),
+      id: faker.datatype.uuid(),
       name: faker.name.firstName() + ' ' + faker.name.lastName(),
     });
   }
