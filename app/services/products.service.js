@@ -1,4 +1,5 @@
 const faker = require('faker');
+const boom = require('@hapi/boom');
 
 // Modularizando los servicios mantenemos un codigo mas legible, mantenible y
 // en caso de algun cambio, estos no afecten el funcionamiento de otros componentes.
@@ -21,19 +22,32 @@ class ProductsService {
         price: parseInt(faker.commerce.price()),
         image: faker.image.imageUrl(),
         category: faker.commerce.department(),
+        isBlocked: faker.datatype.boolean(),
       });
     }
   }
 
-  find() {
-    return this.products;
+  // Simulacion de asincronia.
+  async find() {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        resolve(this.products);
+      }, 3000);
+    });
   }
 
-  findOne(id) {
-    return this.products.find((product) => product.id === id);
+  async findOne(id) {
+    const product = await this.products.find((product) => product.id === id);
+    if (!product) {
+      throw boom.notFound('Product not found');
+    }
+    if (product.isBlocked) {
+      throw boom.conflict('Forbidden');
+    }
+    return product;
   }
 
-  create(data) {
+  async create(data) {
     const newProduct = {
       id: faker.datatype.uuid(),
 
@@ -45,10 +59,10 @@ class ProductsService {
     return newProduct;
   }
 
-  update(id, changes) {
+  async update(id, changes) {
     const index = this.products.findIndex((product) => product.id === id);
     if (index === -1) {
-      throw new Error(`This item doesn't exists`);
+      throw boom.notFound('Product not found');
     }
 
     // Obtenemos el producto original del array y con spread
@@ -58,13 +72,13 @@ class ProductsService {
       ...product,
       ...changes,
     };
-    return this.products[index];
+    return await this.products[index];
   }
 
-  delete(id) {
+  async delete(id) {
     const index = this.products.findIndex((product) => product.id === id);
     if (index === -1) {
-      throw new Error(`This item doesn't exists`);
+      throw boom.notFound('Product not found');
     }
 
     // Crea una copia del producto a borrar para retornarla e indicar
