@@ -1,17 +1,17 @@
 const express = require('express');
-const faker = require('faker');
+const UsersService = require('../services/users.service');
+
+const service = new UsersService();
 
 const router = express.Router();
 
-router.get('/', (req, res) => {
-  const users = [];
-  for (let index = 0; index < 50; index++) {
-    users.push({
-      id: faker.datatype.uuid(),
-      name: faker.name.firstName() + ' ' + faker.name.lastName(),
-    });
+router.get('/', async (req, res, next) => {
+  try {
+    const users = await service.find();
+    res.status(200).json(users);
+  } catch (error) {
+    next(error);
   }
-  res.json(users);
 });
 
 module.exports = router;

@@ -50,7 +50,7 @@ class ProductsService {
   async create(data) {
     const newProduct = {
       id: faker.datatype.uuid(),
-
+      isBlocked: false,
       // Con esto copiamos los valores de data, asi como su estructura
       ...data,
     };
