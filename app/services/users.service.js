@@ -1,3 +1,4 @@
+const boom = require('@hapi/boom');
 const faker = require('faker');
 
 class UsersService {
@@ -24,13 +25,47 @@ class UsersService {
     return this.users;
   }
 
-  findOne() {}
+  async findOne(id) {
+    const user = await this.users.find((user) => user.userId === id);
+    if (!user) {
+      throw new boom.notFound(`This user doesn't exist`);
+    }
+    return user;
+  }
 
-  create() {}
+  async create(data) {
+    const newUser = {
+      id: faker.datatype.uuid(),
+      ...data,
+      registerDate: new Date(),
+      orders: [],
+    };
+    this.users.push(newUser);
+    return newUser;
+  }
 
-  update() {}
+  async update(id, changes) {
+    const index = await this.users.findIndex((user) => user.userId === id);
+    if (index === -1) {
+      throw new boom.badRequest('User not found, try again');
+    }
+    const user = this.users[index];
+    this.users[index] = {
+      ...user,
+      ...changes,
+    };
+    return await this.users[index];
+  }
 
-  delete() {}
+  async delete(id) {
+    const index = this.users.findIndex((user) => user.userId === id);
+    if (index === -1) {
+      throw new boom.badRequest('User not found, try again');
+    }
+    const deletedUser = this.users[index];
+    this.users.splice(index, 1);
+    return deletedUser;
+  }
 }
 
 module.exports = UsersService;

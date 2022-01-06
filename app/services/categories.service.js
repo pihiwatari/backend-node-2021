@@ -47,7 +47,7 @@ class CategoriesService {
   }
 
   async update(id, changes) {
-    const index = this.categories.findIndex(
+    const index = await this.categories.findIndex(
       (category) => category.categoryId === id
     );
     if (index === -1) {
